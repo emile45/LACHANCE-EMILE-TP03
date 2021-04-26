@@ -11,11 +11,11 @@ public class teteMonstre : MonoBehaviour
         monstre = GetComponentInParent<Monstre>();
     }
 
+    //appel la fonction qui tue le monstre si le joueur saute dessu
     private void OnTriggerEnter(Collider other)
     {
         if (monstre)
-        {
             monstre.headCollision(other);
-        }
+        
     }
 }
