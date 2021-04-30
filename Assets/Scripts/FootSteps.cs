@@ -43,8 +43,15 @@ public class FootSteps : MonoBehaviour
 
     public void Step()
     {
-        // Faire joueur le son
-        audioSource.PlayOneShot(listSteps[Random.Range(0, listSteps.Count)]);
+        StartCoroutine(soundFootsteps());
 
+    }
+
+    private IEnumerator soundFootsteps()
+    {
+        AudioClip clip = listSteps[Random.Range(0, listSteps.Count)];
+        // Faire joueur le son
+        audioSource.PlayOneShot(clip);
+        yield return new WaitForSeconds(clip.length);
     }
 }

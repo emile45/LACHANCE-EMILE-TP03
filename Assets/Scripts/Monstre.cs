@@ -44,7 +44,7 @@ public class Monstre : MonoBehaviour
     public void headCollision(Collider collider){
         if (playerRb.velocity.y < 0f)
         {
-            audioManager.mortMonstre();
+            audioManager.soundEffect("mortMonstre");
             Object.Destroy(monstre_gmObject);
         }
             
@@ -87,5 +87,10 @@ public class Monstre : MonoBehaviour
 
         // Commencer une nouvelle patrouille
         agentBusy = false;
+    }
+
+    public void Walk()
+    {
+        audioManager.soundEffect("monstreWalk");
     }
 }

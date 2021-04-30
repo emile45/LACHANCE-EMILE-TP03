@@ -13,7 +13,7 @@ public class PlayerMovements : MonoBehaviour
 
 
 
-    // Variables privées
+    // Variables priv?es
     private float inputHorizontal;
 
     private Rigidbody rb;
@@ -32,33 +32,39 @@ public class PlayerMovements : MonoBehaviour
 
     private Vector3 rotPlayer;
 
-    private bool isGrounded;
+    public static bool isGrounded;
 
     private ConstantForce constantForce_player;
 
     private bool slam;
 
-    public AudioManager audioManager;
+    private bool slamClipPlayed=false;
 
+    public static bool justRespawned=false;
+
+    [Header("Managers")]
+    public AudioManager audioManager;
+    public GameManager gameManager;
 
 
     void Awake()
     {
-        // Récupératione et assignation des variables du personnage.
+        // R?cup?ratione et assignation des variables du personnage.
         rb = GetComponent<Rigidbody>();
         playerAnimator = GetComponent<Animator>();
         constantForce_player = GetComponent<ConstantForce>();
+
     }
 
     void Update()
     {
-        // Vérifier si l'on touche le sol
+        // V?rifier si l'on touche le sol
         isGrounded = Physics.CheckSphere(feetPos.position, 0.15f, 1, QueryTriggerInteraction.Ignore);
 
-        //Si le joueur ne touche pas le sol, ses mouvements sont réduits de 50%
+        //Si le joueur ne touche pas le sol, ses mouvements sont r?duits de 50%
         if (!isGrounded && !slam)
         {
-            // Vertical (W, S et Joystick avant/arrière)
+            // Vertical (W, S et Joystick avant/arri?re)
             inputHorizontal = Input.GetAxis("Horizontal") / 2;
         }
         // Si le joueur touche le sol, vitesse normale.
@@ -67,14 +73,14 @@ public class PlayerMovements : MonoBehaviour
             inputHorizontal = Input.GetAxis("Horizontal");
         }
 
-        //Récupération de la rotation du joueur
+        //R?cup?ration de la rotation du joueur
         rotPlayer = rb.rotation.eulerAngles;
 
-        //Détermine la vitesse du joueur et d'animation.
+        //D?termine la vitesse du joueur et d'animation.
         animationSpeed = Mathf.Lerp(animationSpeed, 2f, lerpSpeed);
         speed = Mathf.Lerp(speed, speedRunning, lerpSpeed);
         
-        //Détermine si le joueur bouge.
+        //D?termine si le joueur bouge.
         inMotion = Mathf.Abs(inputHorizontal) > 0f;
         playerAnimator.SetBool("inMotion", inMotion);
 
@@ -101,50 +107,56 @@ public class PlayerMovements : MonoBehaviour
 
 
 
-        //Détermine la direction de déplacement du personnage.
+        //D?termine la direction de d?placement du personnage.
         moveDirection = transform.forward * inputHorizontal;
 
         //Sauter
         if (Input.GetButtonDown("Jump") && isGrounded == true)
         {
             // Bruits de saut
-            audioManager.sautJoueur();
+            audioManager.soundEffect("sautJoueur");
             new WaitForSeconds(audioManager.jump.length);
             //ne touche pas le sol
             isGrounded = false;
-            //Déclenche l'animation
+            //D?clenche l'animation
             playerAnimator.SetTrigger("Jump");
-            //modifie la vélocitée
+            //modifie la v?locit?e
             rb.velocity = new Vector2(rb.velocity.x, jumpHeight);
         }
 
         //Slam seulement si le joueur est dans le airs
         if (Input.GetKeyDown(KeyCode.S) && isGrounded == false)
         {
-            //déclenche l'animation
+            //d?clenche l'animation
             playerAnimator.SetBool("Crouch", true);
-            //modifie la vélocitée et ajoute la force vers le bas.
+            //modifie la v?locit?e et ajoute la force vers le bas.
             rb.velocity = Vector3.zero;
-            rb.AddForce(Vector3.down * 50f, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.down * 20f, ForceMode.VelocityChange);
 
             //slam?
             slam = true;
 
 
         }
-        //Si le joueur relâche la touche, on arrête
+        if(slam && isGrounded && !slamClipPlayed)
+        {
+            audioManager.soundEffect("slam");
+            slamClipPlayed = true;
+            StartCoroutine(slamEnd());
+        }
+            
+
+        //Si le joueur rel?che la touche, on arr?te
         if (Input.GetKeyUp(KeyCode.S))
         {
-            //arrête l'animation
-            playerAnimator.SetBool("Crouch", false);
-            //enlève la force.
-            constantForce_player.force = Vector3.zero;
-            //slam?
-            slam = false;
+            endSlam();
         }
         if (!inMotion || !isGrounded)
             playerAnimator.SetFloat("Horizontal", 0f);
-            
+
+        //Vérifier si on tombe dans le vide
+        if (rb.position.y <= 50f && !justRespawned)
+            gameManager.tuerOneShot();
     }
     private void FixedUpdate()
     {
@@ -152,7 +164,7 @@ public class PlayerMovements : MonoBehaviour
         if (slam)
             return;
 
-        // Déplacer le personnage selon le vecteur de direction
+        // D?placer le personnage selon le vecteur de direction
         if(rotPlayer.y == 0f)
         {
             rb.MovePosition(rb.position + moveDirection.normalized * speed * Time.fixedDeltaTime);
@@ -165,9 +177,24 @@ public class PlayerMovements : MonoBehaviour
 
     public void repousserJoueur(Transform posMonstre)
     {
-        rb.AddExplosionForce(5f, posMonstre.position, 5f, 0.5f, ForceMode.Impulse);
-        rb.AddForce(-posMonstre.forward *7, ForceMode.VelocityChange);
-        rb.velocity = new Vector2(rb.velocity.x, 2);
+        rb.AddForce(-posMonstre.forward *5f, ForceMode.VelocityChange);
+        rb.velocity = new Vector2(rb.velocity.x, 1.5f);
     }
 
+    private IEnumerator slamEnd()
+    {
+        yield return new WaitForSeconds(0.15f);
+        endSlam();
+    }
+
+    private void endSlam()
+    {
+        //arr?te l'animation
+        playerAnimator.SetBool("Crouch", false);
+        //enl?ve la force.
+        constantForce_player.force = Vector3.zero;
+        //slam?
+        slam = false;
+        slamClipPlayed = false;
+    }
 }

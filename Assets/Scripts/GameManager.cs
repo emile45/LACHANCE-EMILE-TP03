@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public UI_Script uI_Script;
 
+    public AudioManager audioManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +26,7 @@ public class GameManager : MonoBehaviour
     public void enleverVie() {
         if(nbrVies > 0)
         {
+            audioManager.soundEffect("playerDamage");
             uI_Script.enleverVie();
             nbrVies -= 1;
         }
@@ -34,6 +37,15 @@ public class GameManager : MonoBehaviour
     }
     private void partiePerdu()
     {
-        uI_Script.trigger_GameOver();   
+        uI_Script.trigger_GameOver();
+    }
+
+    public void tuerOneShot()
+    {
+        int x = GameManager.nbrVies;
+        for (int i = 0; i <= x; i++)
+        {
+            enleverVie();
+        }
     }
 }

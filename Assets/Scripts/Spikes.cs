@@ -12,17 +12,11 @@ public class Spikes : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // Si la collision provient du joueur
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !PlayerMovements.isGrounded)
         {
             //Effet sonore
-            audioManager.mortPikes();
-            // boucle qui vas tuer le joueur peut importe la vie qui lui reste
-            int x = GameManager.nbrVies;
-            for(int i=0; i <= x; i++)
-            {
-                gameManager.enleverVie();
-            }
-
+            audioManager.soundEffect("mortPikes");
+            gameManager.tuerOneShot();
         }
     }
 }
