@@ -5,26 +5,32 @@ using UnityEngine.AI;
 
 public class Monstre : MonoBehaviour
 {
+    //Privates
     private Rigidbody playerRb;
-
     private NavMeshAgent navMeshAgent;
     private bool agentBusy = false;
-
     private Vector3 initialPos;
-
     private Vector3 lastKnownVector;
+    private AudioSource sourceMonstre;
+    private bool stopWalkingNoise=false;
 
-    public Transform monstre;
-
-    public GameObject monstre_gmObject;
-
-    public GameManager gameManager;
-
-    public AudioManager audioManager;
-
+    //Vitesse
     public float speed = 3f;
 
-    public PlayerMovements playerMovements;
+
+    private GameManager gameManager;
+    private AudioManager audioManager;
+    private PlayerMovements playerMovements;
+
+
+    [Header("Clips audio")]
+    public AudioClip walking;
+    public AudioClip mortMontre;
+
+
+    [Header("Others")]
+    public GameObject monstre_gmObject;
+    public Collider colliderCorp;
 
     void Start()
     {
@@ -32,6 +38,12 @@ public class Monstre : MonoBehaviour
         playerRb = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         initialPos = transform.position;
+        sourceMonstre = GetComponent<AudioSource>();
+
+        gameManager = FindObjectOfType<GameManager>();
+        audioManager = FindObjectOfType<AudioManager>();
+        playerMovements = FindObjectOfType<PlayerMovements>();
+
     }
     void Update()
     {
@@ -44,8 +56,13 @@ public class Monstre : MonoBehaviour
     public void headCollision(Collider collider){
         if (playerRb.velocity.y < 0f)
         {
+            if (!stopWalkingNoise)
+            {
+                stopWalkingNoise = true;
+                sourceMonstre.Stop();
+            }
+            StartCoroutine(mortMonstre());
             audioManager.soundEffect("mortMonstre");
-            Object.Destroy(monstre_gmObject);
         }
             
     }
@@ -53,7 +70,6 @@ public class Monstre : MonoBehaviour
     public void bodyCollision(Collider collider)
     {
         gameManager.enleverVie();
-        playerMovements.repousserJoueur(monstre);
     }
     Vector3 getRandomDestination()
     {
@@ -91,6 +107,22 @@ public class Monstre : MonoBehaviour
 
     public void Walk()
     {
-        audioManager.soundEffect("monstreWalk");
+        if(!stopWalkingNoise)
+            StartCoroutine(monstreWalk());
+    }
+    private IEnumerator monstreWalk()
+    {
+        sourceMonstre.PlayOneShot(walking);
+        yield return new WaitForSeconds(walking.length);
+    }
+    private IEnumerator mortMonstre()
+    {
+        colliderCorp.enabled = false;
+        if (!sourceMonstre.isPlaying) {
+            sourceMonstre.PlayOneShot(mortMontre);
+            yield return new WaitForSeconds(mortMontre.length);
+            Object.Destroy(monstre_gmObject);
+        }
+
     }
 }

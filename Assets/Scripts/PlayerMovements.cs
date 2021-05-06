@@ -135,7 +135,8 @@ public class PlayerMovements : MonoBehaviour
 
             //slam?
             slam = true;
-
+            if (rb.position.y <= 40f && !justRespawned)
+                gameManager.tuerOneShot();
 
         }
         if(slam && isGrounded && !slamClipPlayed)
@@ -155,7 +156,7 @@ public class PlayerMovements : MonoBehaviour
             playerAnimator.SetFloat("Horizontal", 0f);
 
         //Vérifier si on tombe dans le vide
-        if (rb.position.y <= 50f && !justRespawned)
+        if (rb.position.y <= 40f && !justRespawned)
             gameManager.tuerOneShot();
     }
     private void FixedUpdate()
@@ -173,12 +174,6 @@ public class PlayerMovements : MonoBehaviour
         {
             rb.MovePosition(rb.position - moveDirection.normalized * speed * Time.fixedDeltaTime);
         }
-    }
-
-    public void repousserJoueur(Transform posMonstre)
-    {
-        rb.AddForce(-posMonstre.forward *5f, ForceMode.VelocityChange);
-        rb.velocity = new Vector2(rb.velocity.x, 1.5f);
     }
 
     private IEnumerator slamEnd()

@@ -2434,7 +2434,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "Ces petites cr\xE9atures au bruit r\xE9pugnant vous enl\xE8vera 1 coeur
     par coups. Vous pouvez les tuer en leur sautant sur la t\xEAte. Faites attention
-    \xE0 leur trajectoire, elle est impr\xE9dictible."
+    \xE0 leur trajectoire, elle est impr\xE9visible."
 --- !u!222 &1053145073
 CanvasRenderer:
   m_ObjectHideFlags: 0

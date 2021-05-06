@@ -41,7 +41,7 @@ public class UI_Script : MonoBehaviour
     private int updateInterval = 80; // in frames
 
 
-    void Start()
+    void Awake()
     {
         // Setup des sliders
         sliderSetup(sliderMaster);
@@ -70,22 +70,17 @@ public class UI_Script : MonoBehaviour
         menuOptions.SetActive(false);
         gameOver.SetActive(false);
 
+        PlayerMovements.justRespawned = false;
+
 
     }
     void sliderSetup(Slider slider)
     {
         slider.minValue = 0.001f;
         slider.maxValue = 1.6f;
-        if (slider == sliderMusic)
-        {
-            slider.value = 0.4f;
-            slider_Music(slider.value);
-        }
 
-        else
-            slider.value = 1f;
-        
 
+        slider.value = 0.4f;
     }
 
 
@@ -130,13 +125,12 @@ public class UI_Script : MonoBehaviour
         SceneManager.LoadScene("Main");
         GameManager.nbrVies = 4;
         Time.timeScale = 1;
-        justRespawnedEnd();
+        StartCoroutine(justRespawnedEnd());
     }
 
     public void trigger_GameOver()
     {
         gameOver.SetActive(true);
-        Time.timeScale = 0;
     }
     private void FixedUpdate()
     {

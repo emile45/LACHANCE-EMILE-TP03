@@ -10,14 +10,11 @@ public class AudioManager : MonoBehaviour
     public AudioMixer mainMixer;
     [Header("Sources")]
     public AudioSource sourceJoueur;
-    public AudioSource sourceMonstre;
 
     [Header("Clips audio")]
-    public AudioClip monstreMort;
     public AudioClip jump;
     public AudioClip spikesDeath;
     public AudioClip slamClip;
-    public AudioClip monstreDeplacement;
     public AudioClip hitmaker;
     //Audio clips
 
@@ -31,10 +28,7 @@ public class AudioManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            mortMonstre();
-        }
+
     }
 
     public void soundEffect(string name)
@@ -44,34 +38,19 @@ public class AudioManager : MonoBehaviour
             case "slam":
                 StartCoroutine(slam());
                 break;
-            case "mortMonstre":
-                StartCoroutine(mortMonstre());
-                break;
             case "sautJoueur":
                 StartCoroutine(sautJoueur());
                 break;
             case "mortPikes":
                 StartCoroutine(mortPikes());
                 break;
-            case "monstreWalk":
-                StartCoroutine(monstreWalk());
-                break;
             case "playerDamage":
                 StartCoroutine(playerDamage());
-                break;
+                break;            
         }
     }
 
-    private IEnumerator mortMonstre()
-    {
-        sourceMonstre.PlayOneShot(monstreMort);
-        yield return new WaitForSeconds(monstreMort.length);
-    }
-    private IEnumerator monstreWalk()
-    {
-        sourceMonstre.PlayOneShot(monstreDeplacement);
-        yield return new WaitForSeconds(monstreDeplacement.length);
-    }
+
     private IEnumerator sautJoueur()
     {
         sourceJoueur.PlayOneShot(jump);
