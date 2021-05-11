@@ -62,4 +62,8 @@ public class GameManager : MonoBehaviour
             enleverVie();
         }
     }
+    public void mortBoss()
+    {
+        uI_Script.trigger_GameWon();
+    }
 }

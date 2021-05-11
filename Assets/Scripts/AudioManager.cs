@@ -10,25 +10,33 @@ public class AudioManager : MonoBehaviour
     public AudioMixer mainMixer;
     [Header("Sources")]
     public AudioSource sourceJoueur;
+    public AudioSource sourceMusic;
 
     [Header("Clips audio")]
     public AudioClip jump;
     public AudioClip spikesDeath;
     public AudioClip slamClip;
     public AudioClip hitmaker;
-    //Audio clips
+    public AudioClip clipFin;
+
+    private float[] m_audioSpectrum;
+
+    public static float spectrumValue { get; private set; }
 
 
     // Start is called before the first frame update
     void Start()
     {
-
+        m_audioSpectrum = new float[128];
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        sourceMusic.GetSpectrumData(m_audioSpectrum, 0, FFTWindow.Hamming);
+        if (m_audioSpectrum != null && m_audioSpectrum.Length > 0)
+            spectrumValue = m_audioSpectrum[0] * 100;
+        //Debug.Log(spectrumValue);
     }
 
     public void soundEffect(string name)
@@ -46,7 +54,10 @@ public class AudioManager : MonoBehaviour
                 break;
             case "playerDamage":
                 StartCoroutine(playerDamage());
-                break;            
+                break;
+            case "musicFin":
+                StartCoroutine(musicFin());
+                break;
         }
     }
 
@@ -73,6 +84,12 @@ public class AudioManager : MonoBehaviour
         sourceJoueur.PlayOneShot(hitmaker);
         yield return new WaitForSeconds(hitmaker.length);
     }
+    private IEnumerator musicFin()
+    {
+        sourceMusic.Stop();
+        sourceMusic.PlayOneShot(clipFin);
+        yield return new WaitForSeconds(clipFin.length);
+    }
 
     public void sliderControl(string source, float value)
     {
@@ -92,4 +109,5 @@ public class AudioManager : MonoBehaviour
                 break;
         }
     }
+
 }

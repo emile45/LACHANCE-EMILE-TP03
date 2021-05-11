@@ -3,7 +3,15 @@ guid: 95ea16a50516d3a4b85325bace7c1c43
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - mainMixer: {fileID: 24100000, guid: 787b0adcbbe8020429fc28b93808fe83, type: 2}
+  - sourceJoueur: {instanceID: 0}
+  - sourceMusic: {instanceID: 0}
+  - jump: {instanceID: 0}
+  - spikesDeath: {instanceID: 0}
+  - slamClip: {instanceID: 0}
+  - hitmaker: {instanceID: 0}
+  - clipFin: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

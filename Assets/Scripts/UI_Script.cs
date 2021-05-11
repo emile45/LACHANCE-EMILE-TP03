@@ -26,19 +26,28 @@ public class UI_Script : MonoBehaviour
 
 
     //Éléments du menu Partie Perdue
-    [Header("Éléments de partie perdue")]
+    [Header("Éléments de partie perdue et autres")]
+    public GameObject canvasPrincipal;
     public GameObject gameOver;
     public Button btnRecommencer;
     public Button btnQuitterPartie;
+
+    [Header("Éléments de partie gangnée")]
+    public GameObject canvasFin;
+    public GameObject cameraFin;
+    public Renderer backgroundFin;
+    public Button btnQuitFin;
 
     [Header("Managers")]
     public AudioManager audioManager;
 
     //Liste contenant les coeurs du joueur
     private List<RawImage> listVies = new List<RawImage>();
+    private List<Color> listColors = new List<Color>();
     private int nbrVies;
 
-    private int updateInterval = 80; // in frames
+    private float updateInterval = 80; // in frames
+    private bool colorFlash=false;
 
 
     void Awake()
@@ -61,6 +70,7 @@ public class UI_Script : MonoBehaviour
         btnReglages.onClick.AddListener(btnReglages_OnClick);
         btnQuitterMenu.onClick.AddListener(btnReglages_OnClick);
         btnQuitterPartie.onClick.AddListener(btnQuitterPartie_OnClick);
+        btnQuitFin.onClick.AddListener(btnQuitterPartie_OnClick);
         btnRecommencer.onClick.AddListener(btnRecommencer_OnClick);
         sliderMaster.onValueChanged.AddListener(slider_Master);
         sliderMusic.onValueChanged.AddListener(slider_Music);
@@ -69,10 +79,18 @@ public class UI_Script : MonoBehaviour
 
         menuOptions.SetActive(false);
         gameOver.SetActive(false);
+        canvasFin.SetActive(false);
+        cameraFin.SetActive(false);
 
         PlayerMovements.justRespawned = false;
 
-
+        //Ajout des couleurs de background a une liste.
+        listColors.Add(Color.green);
+        listColors.Add(Color.blue);
+        listColors.Add(Color.cyan);
+        listColors.Add(Color.red);
+        listColors.Add(Color.magenta);
+        listColors.Add(Color.yellow);
     }
     void sliderSetup(Slider slider)
     {
@@ -92,6 +110,8 @@ public class UI_Script : MonoBehaviour
             btnReglages_OnClick();
         }
         FixedUpdate();
+        //updateInterval = AudioManager.spectrumValue;
+
     }
 
     public void enleverVie()
@@ -117,6 +137,7 @@ public class UI_Script : MonoBehaviour
     }
     private void btnQuitterPartie_OnClick()
     {
+        GameManager.nbrVies = 4;
         SceneManager.LoadScene("Accueil");
     }
     private void btnRecommencer_OnClick()
@@ -132,16 +153,29 @@ public class UI_Script : MonoBehaviour
     {
         gameOver.SetActive(true);
     }
+    public void trigger_GameWon()
+    {
+        cameraFin.SetActive(true);
+        canvasFin.SetActive(true);
+        canvasPrincipal.SetActive(false);
+        audioManager.soundEffect("musicFin");
+        colorFlash = true;
+    }
     private void FixedUpdate()
     {
-        if(Time.timeScale == 0)
-            if (Time.frameCount % this.updateInterval != 0) return;
+        if (Time.frameCount % this.updateInterval != 0) return;
+        if (Time.timeScale == 0)     
         {
             if (txtPause.activeSelf == true)
                 txtPause.SetActive(false);
             else
                 txtPause.SetActive(true);
         }
+        if (colorFlash)
+        {
+            backgroundFin.material.color = listColors[Random.Range(0, listColors.Count)];
+        }
+
     }
     private void slider_Master(float Value)
     {

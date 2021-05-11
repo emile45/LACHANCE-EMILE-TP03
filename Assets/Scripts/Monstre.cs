@@ -13,6 +13,8 @@ public class Monstre : MonoBehaviour
     private Vector3 lastKnownVector;
     private AudioSource sourceMonstre;
     private bool stopWalkingNoise=false;
+    private bool justHit = false;
+    private GameObject slime;
 
     //Vitesse
     public float speed = 3f;
@@ -20,7 +22,6 @@ public class Monstre : MonoBehaviour
 
     private GameManager gameManager;
     private AudioManager audioManager;
-    private PlayerMovements playerMovements;
 
 
     [Header("Clips audio")]
@@ -31,6 +32,7 @@ public class Monstre : MonoBehaviour
     [Header("Others")]
     public GameObject monstre_gmObject;
     public Collider colliderCorp;
+    public int nbrViesM;
 
     void Start()
     {
@@ -38,33 +40,43 @@ public class Monstre : MonoBehaviour
         playerRb = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         initialPos = transform.position;
-        sourceMonstre = GetComponent<AudioSource>();
+        sourceMonstre = GetComponentInParent<AudioSource>();
 
         gameManager = FindObjectOfType<GameManager>();
         audioManager = FindObjectOfType<AudioManager>();
-        playerMovements = FindObjectOfType<PlayerMovements>();
+        slime = GameObject.Find("Slime");
 
     }
     void Update()
     {
         //Si l'agent n'est pas occupé, on le fait bouger.
         if(!agentBusy)
-            StartCoroutine(Patrol(getRandomDestination(), speed));
+            StartCoroutine(Patrol(getRandomDestination(), speed));        
     }
 
     //tuer le monstre
     public void headCollision(Collider collider){
-        if (playerRb.velocity.y < 0f)
+        if (playerRb.velocity.y < -0.01f && justHit == false)
         {
-            if (!stopWalkingNoise)
+            justHit = true;
+            if (nbrViesM == 1)
+                nbrViesM--;
+            else
             {
-                stopWalkingNoise = true;
-                sourceMonstre.Stop();
+                PlayerMovements.onTeteMonstre = true;
+                StartCoroutine(monstreDamageDelay());
             }
-            StartCoroutine(mortMonstre());
-            audioManager.soundEffect("mortMonstre");
-        }
-            
+                
+            if (nbrViesM == 0)
+            {
+
+                sourceMonstre.PlayOneShot(mortMontre);
+                if (monstre_gmObject.name == "MonstreBleu")
+                    gameManager.mortBoss();
+                Object.Destroy(monstre_gmObject);
+                //StartCoroutine(mortMonstre());
+            }
+        }      
     }
     //Fonction publique pour quand le joueur entre en conatct avec un monstre.
     public void bodyCollision(Collider collider)
@@ -119,10 +131,15 @@ public class Monstre : MonoBehaviour
     {
         colliderCorp.enabled = false;
         if (!sourceMonstre.isPlaying) {
-            sourceMonstre.PlayOneShot(mortMontre);
-            yield return new WaitForSeconds(mortMontre.length);
-            Object.Destroy(monstre_gmObject);
-        }
 
+            yield return new WaitForSeconds(mortMontre.length);
+
+        }
+    }
+    private IEnumerator monstreDamageDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        justHit = false;
+        nbrViesM--;
     }
 }
