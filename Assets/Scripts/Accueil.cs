@@ -27,9 +27,9 @@ public class Accueil : MonoBehaviour
         //Assignation des EventListener
         btnJouer.onClick.AddListener(btnJouer_OnClick);
         btnInstructions.onClick.AddListener(btnInstructions_OnClick);
-        btnFleche.onClick.AddListener(btnFleche_OnClick);
+        btnFleche.onClick.AddListener(btnFlecheFin_OnClick);
         btnFlecheRetour.onClick.AddListener(btnFlecheRetour_OnClick);
-        btnFlecheFin.onClick.AddListener(btnFlecheFin_OnClick);
+        btnFlecheFin.onClick.AddListener(btnFleche_OnClick);
 
         menuTouches.SetActive(false);
         instructions.SetActive(false);
@@ -46,24 +46,21 @@ public class Accueil : MonoBehaviour
     }
     void btnInstructions_OnClick()
     {
-        menuTouches.SetActive(true);
+        instructions.SetActive(true);
 
     }
 
     void btnFleche_OnClick()
     {
-        instructions.SetActive(true);
+        menuTouches.SetActive(true);
 
     }
     void btnFlecheRetour_OnClick()
     {
-        instructions.SetActive(false);
+        menuTouches.SetActive(false);
     }
     void btnFlecheFin_OnClick()
     {
-        instructions.SetActive(false);
-        menuTouches.SetActive(false);
-        canvasPrincipale.SetActive(false);
-        canvasFin.SetActive(true);
+        SceneManager.LoadScene("Main");
     }
 }
