@@ -15,6 +15,7 @@ public class Monstre : MonoBehaviour
     private bool stopWalkingNoise=false;
     private bool justHit = false;
     private GameObject slime;
+    public GameObject sangMonstre;
 
     //Vitesse
     public float speed = 3f;
@@ -23,7 +24,7 @@ public class Monstre : MonoBehaviour
     private GameManager gameManager;
     private AudioManager audioManager;
 
-
+    // Publiques
     [Header("Clips audio")]
     public AudioClip walking;
     public AudioClip mortMontre;
@@ -56,6 +57,7 @@ public class Monstre : MonoBehaviour
 
     //tuer le monstre
     public void headCollision(Collider collider){
+        //Si le joueur entre en collision avec la tête...
         if (playerRb.velocity.y < -0.01f && justHit == false)
         {
             justHit = true;
@@ -66,15 +68,22 @@ public class Monstre : MonoBehaviour
                 PlayerMovements.onTeteMonstre = true;
                 StartCoroutine(monstreDamageDelay());
             }
-                
+            //Si le monstre n'a plus de vie...
             if (nbrViesM == 0)
             {
-
+                //Instantiation du sang
+                GameObject sang = Instantiate(sangMonstre, navMeshAgent.transform.position, Quaternion.identity);
+                //Faire jouer le bruit de mort du monstre
                 sourceMonstre.PlayOneShot(mortMontre);
+
+                //Si c'est le boss, on appel un autre fonction 
                 if (monstre_gmObject.name == "MonstreBleu")
                     gameManager.mortBoss();
+
+                //Destruction du monstre et sang
                 Object.Destroy(monstre_gmObject);
-                //StartCoroutine(mortMonstre());
+                Destroy(sang, 4f);
+                
             }
         }      
     }
@@ -119,23 +128,29 @@ public class Monstre : MonoBehaviour
 
     public void Walk()
     {
+        //Si le monstre ne marche pas déjà, on le fait marcher
         if(!stopWalkingNoise)
             StartCoroutine(monstreWalk());
     }
     private IEnumerator monstreWalk()
     {
+        //Bruits de déplacements du monstre
         sourceMonstre.PlayOneShot(walking);
         yield return new WaitForSeconds(walking.length);
     }
+
     private IEnumerator mortMonstre()
     {
+        //désactiver le collider du monstre pour ne pas qu'il puisse donné des dégâts
         colliderCorp.enabled = false;
-        if (!sourceMonstre.isPlaying) {
-
+        //Jouer le bruit de mort du monstre.
+        if (!sourceMonstre.isPlaying)
             yield return new WaitForSeconds(mortMontre.length);
 
-        }
+        
     }
+
+    //délais entre les attaques du monstre
     private IEnumerator monstreDamageDelay()
     {
         yield return new WaitForSeconds(1f);

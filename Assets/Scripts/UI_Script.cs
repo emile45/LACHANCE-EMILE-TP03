@@ -94,6 +94,7 @@ public class UI_Script : MonoBehaviour
     }
     void sliderSetup(Slider slider)
     {
+        //valeurs par défaut des sliders
         slider.minValue = 0.001f;
         slider.maxValue = 1.6f;
 
@@ -105,22 +106,26 @@ public class UI_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
+        //Si P on ouvre le menu
+        if (Input.GetKeyDown(KeyCode.P))
         {
             btnReglages_OnClick();
         }
+
+        //appel du fixed update pour faire flasher le text de pause et les couleurs à la fin 
         FixedUpdate();
-        //updateInterval = AudioManager.spectrumValue;
 
     }
 
     public void enleverVie()
     {
+        //enlever un coeur de l'écran
         listVies[GameManager.nbrVies - 1].enabled = false;
     }
 
     private void btnReglages_OnClick()
     {
+        //Ouvrire le menu réglages s'il est fermé et vis-versa
         if (menuOptions.activeSelf == false)
         {
             menuOptions.SetActive(true);
@@ -137,33 +142,45 @@ public class UI_Script : MonoBehaviour
     }
     private void btnQuitterPartie_OnClick()
     {
+        //remettre le compteur de vie a 4
         GameManager.nbrVies = 4;
+        //charger la scène d'acceuil
         SceneManager.LoadScene("Accueil");
     }
     private void btnRecommencer_OnClick()
     {
+        //recharger la scène avec les paramètres par défaut lorsque le bouton recommencer est appuyer
         PlayerMovements.justRespawned = true;
         SceneManager.LoadScene("Main");
         GameManager.nbrVies = 4;
         Time.timeScale = 1;
+        //Attendre avant de changer le booléen "justRespawned"
         StartCoroutine(justRespawnedEnd());
     }
 
     public void trigger_GameOver()
     {
+        //afficher le canvas de partie perdu
         gameOver.SetActive(true);
     }
+
     public void trigger_GameWon()
     {
+        //Changer la caméra, canvas fin et désactiver le canvas principal
         cameraFin.SetActive(true);
         canvasFin.SetActive(true);
         canvasPrincipal.SetActive(false);
+
+        //Musique de fin
         audioManager.soundEffect("musicFin");
         colorFlash = true;
     }
     private void FixedUpdate()
     {
+        //réduire la vitesse d'update
         if (Time.frameCount % this.updateInterval != 0) return;
+
+        //flasher le text en pause
         if (Time.timeScale == 0)     
         {
             if (txtPause.activeSelf == true)
@@ -171,31 +188,37 @@ public class UI_Script : MonoBehaviour
             else
                 txtPause.SetActive(true);
         }
+        //flasher le couleurs
         if (colorFlash)
         {
             backgroundFin.material.color = listColors[Random.Range(0, listColors.Count)];
         }
 
     }
+    //Contrôle de slider Master
     private void slider_Master(float Value)
     {
         audioManager.sliderControl("Master", Value);
-    }    
+    }
+    //Contrôle de slider Music
     private void slider_Music(float Value)
     {
         audioManager.sliderControl("Music", Value);
-    }    
+    }
+    //Contrôle de slider Joueur
     private void slider_Joueur(float Value)
     {
         audioManager.sliderControl("Joueur", Value);
     }
+    //Contrôle de slider Monstres
     private void slider_Monstres(float Value)
     {
         audioManager.sliderControl("Monstres", Value);
     }
 
+
     private IEnumerator justRespawnedEnd()
-    {
+    {        //Attendre avant de changer le booléen "justRespawned"
         yield return new WaitForSeconds(2f);
         PlayerMovements.justRespawned = false;
     }

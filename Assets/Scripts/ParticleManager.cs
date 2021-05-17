@@ -7,19 +7,10 @@ public class ParticleManager : MonoBehaviour
     public ParticleSystem sangMortJoueur;
 
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void activerSang()
     {
+        //activer le sang du joueur
         sangMortJoueur.Play();
     }
 }

@@ -9,6 +9,8 @@ public class wallShooter : MonoBehaviour
     private Animation animationUpDown;
     public GameObject bullet;
     private float timeSince=0f;
+    private AudioSource sourceWallShootr;
+    public AudioClip clipPew;
 
 
 
@@ -16,6 +18,7 @@ public class wallShooter : MonoBehaviour
     void Start()
     {
         animationUpDown = GetComponent<Animation>();
+        sourceWallShootr = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -50,15 +53,24 @@ public class wallShooter : MonoBehaviour
 
     private void Shoot()
     {
+        //Jouer le bruit de tir
+        sourceWallShootr.PlayOneShot(clipPew);
+
+        //Faire apparaître la balle
         GameObject bullet_ = Instantiate(bullet, new Vector3(barrel.position.x, barrel.position.y, barrel.position.z+2f), Quaternion.identity);
         Rigidbody rbBullet = bullet_.GetComponent<Rigidbody>();
         rbBullet.isKinematic = false;
+
+        //appliqué une force en z
         rbBullet.AddForce(new Vector3(0f, 0f, 5f), ForceMode.Impulse);
+
+        //La détruire après 8 secondes
         Destroy(bullet_, 8f);
 
     }
     void OnDrawGizmos()
     {
+        //gizmos affiché dans la scène
         Gizmos.color = Color.magenta;
         Gizmos.DrawRay(barrel.position, barrel.up * 50f);
     }

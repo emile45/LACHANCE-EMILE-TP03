@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class bulletCollider : MonoBehaviour
 {
+    //Récupération des dépendances
     private GameManager gameManager;
     private GameObject bullet;
     void Start()
@@ -15,6 +16,7 @@ public class bulletCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        //Si la balle entre en collision avec le joueur
         if (other.CompareTag("Player"))
         {
             gameManager.enleverVie();

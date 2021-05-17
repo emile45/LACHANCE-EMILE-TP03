@@ -576,6 +576,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65f34bddf9567cd4084902da4b76db3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sangMonstre: {fileID: 2888506385038915112, guid: 7d6ba37cc2ca9074c9367eeedd5024a7,
+    type: 3}
   speed: 2
   walking: {fileID: 8300000, guid: 440e9f1335a4af6469086dc4e5697381, type: 3}
   mortMontre: {fileID: 8300000, guid: 3b75f87262821064f98f4bb94d205f4f, type: 3}

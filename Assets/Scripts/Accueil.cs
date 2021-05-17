@@ -35,6 +35,7 @@ public class Accueil : MonoBehaviour
         instructions.SetActive(false);
         canvasFin.SetActive(false);
 
+        //Lignes pour faire fonctionner WebGl
         #if !UNITY_EDITOR && UNITY_WEBGL			
         UnityEngine.WebGLInput.captureAllKeyboardInput = false;
         #endif

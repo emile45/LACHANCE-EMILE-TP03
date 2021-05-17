@@ -68,8 +68,7 @@ public class PlayerMovements : MonoBehaviour
         // V?rifier si l'on touche le sol
         isGrounded = Physics.CheckSphere(feetPos.position, 0.15f, 1, QueryTriggerInteraction.Ignore);
 
-        if (onTeteMonstre)
-            isGrounded = true;
+ 
 
 
 
@@ -117,7 +116,7 @@ public class PlayerMovements : MonoBehaviour
     void Update()
     {
         //Sauter
-        if (Input.GetButtonDown("Jump") && isGrounded == true)
+        if ((Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W)) && isGrounded == true)
         {
             // Bruits de saut
             audioManager.soundEffect("sautJoueur");
@@ -166,6 +165,9 @@ public class PlayerMovements : MonoBehaviour
         if (rb.position.y <= 40f && !justRespawned)
             gameManager.tuerOneShot();
 
+        //Si on est sur la tête d'un monstre, on peut sauter
+        if (onTeteMonstre)
+            isGrounded = true;
 
     }
     private void Mouvements()
@@ -185,6 +187,7 @@ public class PlayerMovements : MonoBehaviour
         }
     }
 
+    //Attentre puis forcer l'arrêt du Slam
     private IEnumerator slamEnd()
     {
         yield return new WaitForSeconds(0.15f);
