@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FootSteps : MonoBehaviour
 {
-    [Header("Clips")];
+    [Header("Clips")]
     public AudioClip foot1;
     public AudioClip foot2;
     public AudioClip foot3;
