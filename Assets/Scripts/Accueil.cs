@@ -36,9 +36,12 @@ public class Accueil : MonoBehaviour
         canvasFin.SetActive(false);
 
         //Lignes pour faire fonctionner WebGl
-        #if !UNITY_EDITOR && UNITY_WEBGL			
-        UnityEngine.WebGLInput.captureAllKeyboardInput = false;
-        #endif
+#if !UNITY_EDITOR && UNITY_WEBGL			
+    UnityEngine.WebGLInput.captureAllKeyboardInput = true;
+#endif
+
+
+
     }
 
     void btnJouer_OnClick()

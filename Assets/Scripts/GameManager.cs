@@ -23,9 +23,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //Lignes pour faire fonctionner WebGl
-        #if !UNITY_EDITOR && UNITY_WEBGL			
-        UnityEngine.WebGLInput.captureAllKeyboardInput = false;
-        #endif
+#if !UNITY_EDITOR && UNITY_WEBGL			
+    UnityEngine.WebGLInput.captureAllKeyboardInput = true;
+#endif
 
     }
 
